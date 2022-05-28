@@ -1,0 +1,30 @@
+{
+    "name": "petliakss/budgetcontrol",
+    "description": "Laravel package for control self budget",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Serhii Petliak",
+            "email": "petliakss@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Petliakss\\BudgetControl\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Petliakss\\BudgetControl\\Providers\\BudgetControlServiceProvider"
+            ]
+        }
+    },
+    "suggest": {
+        "laravel/framework": "For using inside laravel application"
+    }
+}
