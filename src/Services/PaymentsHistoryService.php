@@ -17,6 +17,8 @@ class PaymentsHistoryService implements PaymentsHistoryServiceInterface
     {
         $paymentsHistoryItem = new PaymentsHistory();
         $paymentsHistoryItem->fill($model->all());
+        $paymentsHistoryItem->sum = $model->getSum();
+        $paymentsHistoryItem->is_required = $model->getIsRequired();
         $paymentsHistoryItem->user_id = $model->getUserId();
         $paymentsHistoryItem->created_at = $model->getCreatedDate();
         $paymentsHistoryItem->save();
@@ -31,8 +33,7 @@ class PaymentsHistoryService implements PaymentsHistoryServiceInterface
     public function update(PaymentsHistory $item, PaymentsHistoryModelInterface $model): bool
     {
         $item->fill($model->all());
-        $item->user_id = $model->getUserId();
-        $item->created_at = $model->getCreatedDate();
+        $item->is_required = $model->getIsRequired();
         $item->save();
         return true;
     }
@@ -55,7 +56,7 @@ class PaymentsHistoryService implements PaymentsHistoryServiceInterface
                 $query->where('type_id', $typeId);
             })
             ->when($searchString !== null, function ($query) use ($model) {
-                $query->where($model->getSearchField(), $model->getSearchString());
+                $query->where($model->getSearchField(), 'like', '%'.$model->getSearchString().'%');
             })
             ->when(($dateFrom !== null && $dateTo !== null), function ($query) use ($model) {
                 $query->whereBetween('created_at', [
@@ -74,12 +75,12 @@ class PaymentsHistoryService implements PaymentsHistoryServiceInterface
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getBalance(): float
+    public function getBalance(): string
     {
         $result = PaymentsHistory::selectRaw("SUM(if(type_id = 1, sum, 0)) - SUM(if(type_id = 2, sum, 0)) as balance")
             ->first();
-        return number_format((float)$result->balance, 2, '.', '');
+        return convert_sum_for_view($result->balance);
     }
 }

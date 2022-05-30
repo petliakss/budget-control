@@ -17,9 +17,9 @@ interface PaymentsHistoryModelInterface
     public function getCategoryId(): int;
 
     /**
-     * @return int
+     * @return boolean
      */
-    public function getIsRequired(): int;
+    public function getIsRequired(): bool;
 
     /**
      * @return string|null

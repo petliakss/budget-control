@@ -49,7 +49,7 @@ class GetCategoriesItemsRequest extends FormRequest implements FiltersInterface
      */
     public function getSearchField(): ?string
     {
-        return $this->input('search_field', config('pss_my_budget_config.filters.default_search_field'));
+        return $this->input('search_field', config('pss_my_budget_config.filters.categories_default_search_field'));
     }
 
     /**

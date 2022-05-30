@@ -32,7 +32,7 @@ class CreatePaymentsHistoryItemRequest extends FormRequest implements PaymentsHi
             'category_id' => [
                 'required',
                 Rule::exists('categories', 'id')->where(function ($query) {
-                    return $query->where('type_id',$this->getTypeId());
+                    return $query->where('type_id', $this->getTypeId());
                 }),
             ]
         ];
@@ -55,11 +55,11 @@ class CreatePaymentsHistoryItemRequest extends FormRequest implements PaymentsHi
     }
 
     /**
-     * @return int
+     * @return boolean
      */
-    public function getIsRequired(): int
+    public function getIsRequired(): bool
     {
-        return (int)$this->input('is_required', 0);
+        return (bool)$this->input('is_required', false);
     }
 
     /**
@@ -75,7 +75,7 @@ class CreatePaymentsHistoryItemRequest extends FormRequest implements PaymentsHi
      */
     public function getCreatedDate(): Carbon
     {
-        return $this->input('created_date', now());
+        return $this->has('created_date') ? Carbon::parse($this->input('created_date')) : now();
     }
 
     /**
@@ -91,6 +91,6 @@ class CreatePaymentsHistoryItemRequest extends FormRequest implements PaymentsHi
      */
     public function getSum(): float
     {
-        return $this->input('sum');
+        return convert_sum_for_db($this->input('sum'));
     }
 }

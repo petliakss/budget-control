@@ -18,7 +18,7 @@ return new class extends Migration
             $table->tinyInteger('type_id')->comment('1-incomes,2-expenses');
             $table->foreignId('category_id')->constrained();
             $table->tinyInteger('is_required')->default(0);
-            $table->decimal('sum')->default(0);
+            $table->integer('sum')->default(0);
             $table->text('comment')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

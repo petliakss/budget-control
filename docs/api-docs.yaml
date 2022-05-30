@@ -1,0 +1,594 @@
+openapi: 3.0.0
+info:
+  title: 'Budget control API'
+  license:
+    name: MIT
+  version: 1.0.0
+paths:
+  /api/pss_budget_control/v1/categories/store:
+    post:
+      tags:
+        - Categories
+      summary: 'Create category item'
+      description: 'Create category item.'
+      operationId: createCategoryItem
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - type_id
+                - name
+              properties:
+                type_id:
+                  description: 'Category type ID (1 - incomes, 2 - outcomes)'
+                  type: integer
+                name:
+                  description: 'Category name'
+                  type: string
+              type: object
+      responses:
+        201:
+          description: 'Successful operation'
+        422:
+          description: 'Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResource'
+  '/api/pss_budget_control/v1/categories/{category}/update':
+    put:
+      tags:
+        - Categories
+      summary: 'Update category item'
+      description: 'Update category item.'
+      operationId: updateCategoryItem
+      parameters:
+        -
+          name: category
+          in: path
+          description: 'Category ID'
+          required: true
+          style: form
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - type_id
+                - name
+              properties:
+                type_id:
+                  description: 'Category type ID (1 - incomes, 2 - outcomes)'
+                  type: integer
+                name:
+                  description: 'Category name'
+                  type: string
+              type: object
+      responses:
+        201:
+          description: 'Successful operation'
+        404:
+          description: 'Wrong category ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResource'
+        422:
+          description: 'Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResource'
+  '/api/pss_budget_control/v1/categories/{category}/delete':
+    delete:
+      tags:
+        - Categories
+      summary: 'Delete category item'
+      description: 'Delete category item.'
+      operationId: deleteCategoryItem
+      parameters:
+        -
+          name: category
+          in: path
+          description: 'Category ID'
+          required: true
+          style: form
+          schema:
+            type: integer
+      responses:
+        204:
+          description: 'Successful operation'
+        404:
+          description: 'Wrong category ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResource'
+  '/api/pss_budget_control/v1/categories/{category}':
+    get:
+      tags:
+        - Categories
+      summary: 'Get category item'
+      description: 'Get category item.'
+      operationId: getCategoryItem
+      parameters:
+        -
+          name: category
+          in: path
+          description: 'Category ID'
+          required: true
+          style: form
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CategoryItem'
+                type: object
+        404:
+          description: 'Wrong category ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResource'
+  /api/pss_budget_control/v1/categories/list:
+    get:
+      tags:
+        - Categories
+      summary: 'Get categories list'
+      description: 'Get categories list.'
+      operationId: getCategoriesList
+      parameters:
+        -
+          name: search_string
+          in: query
+          description: 'Search string for category name'
+          required: false
+          style: form
+          schema:
+            type: string
+          example: 'Example category'
+        -
+          name: type_id
+          in: query
+          description: 'Category type ID'
+          required: false
+          style: form
+          schema:
+            type: integer
+          example: '1'
+        -
+          name: items_per_page
+          in: query
+          description: 'Amount of categories for limit'
+          required: false
+          style: form
+          schema:
+            type: integer
+          example: '10'
+        -
+          name: items_skip
+          in: query
+          description: 'Amount of categories for skip'
+          required: false
+          style: form
+          schema:
+            type: integer
+          example: '0'
+        -
+          name: order_by_direction
+          in: query
+          description: 'Categories ordering direction'
+          required: false
+          style: form
+          schema:
+            type: string
+          example: 'DESC or ASC'
+        -
+          name: order_by_field
+          in: query
+          description: 'Categories ordering fied'
+          required: false
+          style: form
+          schema:
+            type: string
+          example: 'id, name'
+      responses:
+        200:
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryItem'
+                type: object
+  /api/pss_budget_control/v1/payments_history/store:
+    post:
+      tags:
+        - 'Payments history'
+      summary: 'Create payments history item'
+      description: 'Create payments history item.'
+      operationId: createPaymentsHistoryItem
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - type_id
+                - sum
+                - category_id
+              properties:
+                type_id:
+                  description: 'Category type ID (1 - incomes, 2 - outcomes)'
+                  type: integer
+                  example: '1 or 2'
+                sum:
+                  description: 'Payment sum (1 or 1.00)'
+                  type: numeric
+                  example: '1 or 1.00'
+                category_id:
+                  description: 'Category ID'
+                  type: integer
+                  example: '1'
+                is_required:
+                  description: 'Is this payment regular'
+                  type: boolean
+                  example: 'false'
+                comment:
+                  description: 'Comment for payment'
+                  type: string
+                  example: 'Some comment'
+                created_date:
+                  description: 'Payment date'
+                  type: string
+                  example: '2022-02-24 05:30:00'
+              type: object
+      responses:
+        201:
+          description: 'Successful operation'
+        422:
+          description: 'Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResource'
+  '/api/pss_budget_control/v1/payments_history/{item}/update':
+    put:
+      tags:
+        - 'Payments history'
+      summary: 'Update payments history item'
+      description: 'Update payments history item.'
+      operationId: updatePaymentsHistoryItem
+      parameters:
+        -
+          name: item
+          in: path
+          description: 'Payments history item ID'
+          required: true
+          style: form
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+                - type_id
+                - sum
+                - category_id
+              properties:
+                type_id:
+                  description: 'Category type ID (1 - incomes, 2 - outcomes)'
+                  type: integer
+                  example: '1 or 2'
+                sum:
+                  description: 'Payment sum (1 or 1.00)'
+                  type: numeric
+                  example: '1 or 1.00'
+                category_id:
+                  description: 'Category ID'
+                  type: integer
+                  example: '1'
+                is_required:
+                  description: 'Is this payment regular'
+                  type: boolean
+                  example: 'false'
+                comment:
+                  description: 'Comment for payment'
+                  type: string
+                  example: 'Some comment'
+                created_date:
+                  description: 'Payment date'
+                  type: string
+                  example: '2022-02-24 05:30:00'
+              type: object
+      responses:
+        201:
+          description: 'Successful operation'
+        404:
+          description: 'Wrong item ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResource'
+        422:
+          description: 'Unprocessable Entity'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResource'
+  '/api/pss_budget_control/v1/payments_history/{item}/delete':
+    delete:
+      tags:
+        - 'Payments history'
+      summary: 'Delete payments history item'
+      description: 'Delete payments history item.'
+      operationId: deletePaymentsHistoryItem
+      parameters:
+        -
+          name: item
+          in: path
+          description: 'Payments history item ID'
+          required: true
+          style: form
+          schema:
+            type: integer
+      responses:
+        204:
+          description: 'Successful operation'
+        404:
+          description: 'Wrong item ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResource'
+  '/api/pss_budget_control/v1/payments_history/{item}':
+    get:
+      tags:
+        - 'Payments history'
+      summary: 'Get payments history item'
+      description: 'Get payments history item.'
+      operationId: getPaymentsHistoryItem
+      parameters:
+        -
+          name: item
+          in: path
+          description: 'Payments history item ID'
+          required: true
+          style: form
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PaymentsHistoryItem'
+                type: object
+        404:
+          description: 'Wrong item ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResource'
+  /api/pss_budget_control/v1/payments_history/balance:
+    get:
+      tags:
+        - 'Payments history'
+      summary: 'Get payments history balance'
+      description: 'Get payments history balance.'
+      operationId: getPaymentsHistoryBalance
+      responses:
+        200:
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BalanceItem'
+                type: object
+  /api/pss_budget_control/v1/payments_history/list:
+    get:
+      tags:
+        - 'Payments history'
+      summary: 'Get payments history'
+      description: 'Get payments history.'
+      operationId: getPaymentsHistory
+      parameters:
+        -
+          name: search_string
+          in: query
+          description: 'Search string for item comment'
+          required: false
+          style: form
+          schema:
+            type: string
+          example: Example
+        -
+          name: type_id
+          in: query
+          description: 'Category type ID'
+          required: false
+          style: form
+          schema:
+            type: integer
+          example: '1'
+        -
+          name: items_per_page
+          in: query
+          description: 'Amount of items for limit'
+          required: false
+          style: form
+          schema:
+            type: integer
+          example: '10'
+        -
+          name: items_skip
+          in: query
+          description: 'Amount of items for skip'
+          required: false
+          style: form
+          schema:
+            type: integer
+          example: '0'
+        -
+          name: order_by_direction
+          in: query
+          description: 'Items ordering direction'
+          required: false
+          style: form
+          schema:
+            type: string
+          example: 'DESC or ASC'
+        -
+          name: order_by_field
+          in: query
+          description: 'Items ordering fied'
+          required: false
+          style: form
+          schema:
+            type: string
+          example: 'id, sum'
+      responses:
+        200:
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentsHistoryItem'
+                type: object
+components:
+  schemas:
+    BalanceItem:
+      properties:
+        balance:
+          title: Balance
+          description: Balance
+          type: string
+          default: '1.00 or -1.00'
+      type: object
+      xml:
+        name: BalanceItem
+    CategoryItem:
+      properties:
+        id:
+          title: ID
+          description: 'Category ID'
+          type: integer
+          default: '1'
+        type_id:
+          title: 'Type ID'
+          description: 'Category type ID'
+          type: integer
+          default: 1-2
+        name:
+          title: Name
+          description: 'Category name'
+          type: string
+          default: 'Some name'
+      type: object
+      xml:
+        name: CategoryItem
+    ErrorResource:
+      properties:
+        message:
+          title: Message
+          description: 'Error message'
+          type: string
+          default: 'Not found'
+      type: object
+      xml:
+        name: Error
+    PaymentsHistoryItem:
+      properties:
+        id:
+          title: ID
+          description: 'Item ID'
+          type: integer
+          default: '1'
+        type_id:
+          title: 'Type ID'
+          description: 'Item type ID'
+          type: integer
+          default: '1'
+        type_name:
+          title: 'Type name'
+          description: 'Item type name'
+          type: string
+          default: 'Type name'
+        category_id:
+          title: 'Category ID'
+          description: 'Item category ID'
+          type: integer
+          default: '1'
+        category_name:
+          title: 'Category name'
+          description: 'Category name'
+          type: string
+          default: 'Category name'
+        is_required:
+          title: 'Is required'
+          description: 'Is payment regular'
+          type: boolean
+          default: 'false'
+        sum:
+          title: Sum
+          description: 'Item sum'
+          type: string
+          default: '1.00'
+        comment:
+          title: Comment
+          description: 'Item comment'
+          type: string
+          default: 'Some comment or null'
+          nullable: true
+        created_at:
+          title: 'Created at'
+          description: 'Item date'
+          type: string
+          default: '2022-02-24 05:30:00'
+      type: object
+      xml:
+        name: PaymentsHistoryItem
+    ValidationErrorResource:
+      properties:
+        message:
+          title: Message
+          description: 'Error message'
+          type: string
+          default: 'Unprocessable Entity'
+        errors:
+          title: Errors
+          description: 'Errors array'
+          properties:
+            field_name:
+              type: array
+              items:
+                type: string
+          type: object
+      type: object
+      xml:
+        name: ValidationError

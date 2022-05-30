@@ -2,7 +2,8 @@
 
 return [
     'filters' => [
-        'default_search_field' => null,
+        'categories_default_search_field' => 'name',
+        'default_search_field' => 'comment',
         'items_per_page' => null,
         'items_skip' => 0,
         'order_by_direction' => 'desc',

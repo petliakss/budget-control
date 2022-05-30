@@ -14,12 +14,13 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $type_id
  * @property int $category_id
- * @property int $is_required
+ * @property boolean $is_required
  * @property string|null $comment
  * @property int $user_id
- * @property float $sum
+ * @property int $sum
  * @property Carbon $created_at
  * @property Carbon $update_at
+ * @property-read string $amount
  * @property-read string $type_id_name
  * @property-read string $is_required_string
  */
@@ -30,7 +31,12 @@ class PaymentsHistory extends Model
     public const TYPE_INCOMES = 1;
     public const TYPE_OUTCOMES = 2;
 
+    protected $table = 'payments_histories';
     public $timestamps = true;
+
+    protected $casts = [
+        'is_required' => 'boolean'
+    ];
 
     protected $fillable = [
         'type_id',
@@ -63,5 +69,13 @@ class PaymentsHistory extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmountAttribute(): string
+    {
+        return convert_sum_for_view($this->sum);
     }
 }

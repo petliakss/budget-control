@@ -29,7 +29,7 @@ interface PaymentsHistoryServiceInterface
     public function getItemsList(FiltersInterface $model): Collection;
 
     /**
-     * @return float
+     * @return string
      */
-    public function getBalance(): float;
+    public function getBalance(): string;
 }

@@ -25,7 +25,7 @@ class CategoryService implements CategoryServiceInterface
                 $query->where('type_id', $typeId);
             })
             ->when($searchString !== null, function ($query) use($model) {
-                $query->where($model->getSearchField(), $model->getSearchString());
+                $query->where($model->getSearchField(), 'like', '%'.$model->getSearchString().'%');
             })
             ->when($itemsSkip > 0, function ($query) use ($itemsSkip) {
                 $query->skip($itemsSkip);
